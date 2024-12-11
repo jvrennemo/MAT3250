@@ -1,0 +1,148 @@
+\documentclass{amsart}
+\usepackage{egen, egenengelsk}
+\title{MAT3250 -- Discrete Mathematics}
+\begin{document}
+	\maketitle
+	\section{Introduction}
+	Discrete mathematics is the study of finite sets and structures on them.
+	In this course, there are three main parts.
+	In the first part, we develop techniques for counting finite sets (e.g.~``In how many ways can we partition a set of $n$ elements into $k$ non-empty subsets''?).
+	In the second, we study \textbf{graphs}, which are finite sets of points and edges between them.
+	In the third, we consider various algebraic structures one can define on certain finite sets (e.g.~addition and multiplication), and applications of these to coding theory and cryptography.
+	
+	\section{Counting}
+	We are interested in counting problems, a prototypical example of which is ``Given a set $S$ of $n$ elements, how many $k$-element subsets does $S$ have?''.
+	As we know, this question is answered by the binomial coefficient
+	\[
+	\binom{n}{k} = \frac{n \cdot (n-1) \dots (n-k+1)}{k \cdot (k-1) \cdots 2 \cdot 1} = \frac{n!}{k!(n-k)!}.
+	\]
+	So e.g.~, from a squad of 25 footballers, there is exactly 
+	\[
+	\binom{25}{11}
+	\]
+	ways to field a team of 11 players.
+	
+	We will repeat the proof of this later, after we have seen the four main tools we have for solving counting problems.
+	
+	\subsection{Notation}
+	For any finite set $A$, we write $|A|$ for the cardinality (i.e.~the number of elements) of $A$.
+	
+	\subsection{Summation}
+	Recall that two sets $A$ and $B$ are called \textbf{disjoint} if they have no elements in common, that is if $A \cap B = \varnothing$.
+	The first ``rule'' says that if $A$ and $B$ are disjoint, then $|A \cup B| = |A| + |B|$.
+	This feels pretty obvious, and it is probably more or less how you first leanred what the symbol $+$ even means. 
+	We will almost always use this without mentioning it, but let's consider two examples.
+	\begin{nex}
+		Let $A = \{1, 3, 5\}, B = \{2, 10\}$, then $A \cap B = \varnothing$ and $A \cup B = \{1, 2, 3, 5, 10\}$.
+		We have $5 = |A \cup B| = |A| + |B| = 3 + 2$.
+	\end{nex}
+	
+	More generally, given sets $A_1,\dots, A_n$ which are \textbf{pairwise disjoint}, meaning $A_i \cap A_j = \varnothing$ for all $i \not= j$, then
+	\[
+	|A_1 \cup \dots \cup A_n| = \sum_{i=1}^n |A_i|.
+	\]
+
+	\begin{nex}
+		Consider a group $S$ of 367 people.
+		Then at least two of these will have the same birthday.
+		
+		\textit{Proof:} There are (including 29 Feb) 366 possible birthdays.
+		For $d = 1, \dots, 366$, let
+		\[
+		S_d = \{x \in S \mid x\text{ has birthday on the }d\text{th day of the year}\}.
+		\]
+		Then the $S_d$ are all pairwise disjoint, and $S = \bigcup_{d=1}^{366} S_d$, so
+		\[
+		|S| = \sum_{d=1}^{366} |S_d|.
+		\]
+		If no two people have the same birthday, then $|S_d| \le 1$ for all $d$, which means
+		\[
+		367 = |S| = \sum_{d=1}^{366} |S_d| \le \sum_{d=1}^{366} 1 = 366,
+		\]
+		which is absurd.
+		Hence there must be two people with the same birthday.
+	\end{nex}
+	
+	\subsection{Products}
+	If $A, B$ are sets, then the \textbf{product set} $A \times B$ is the set consisting of all pairs $(a,b)$ with $a \in A, b \in B$.
+	The product rule for counting says that if $A$ and $B$ are finite sets, then $|A \times B| = |A| \cdot |B|$.
+	Again, this is almost the definition of the multiplication operation:
+	\begin{nex}
+		Let $A = \{1, 2, 3\}$ and $B = \{1, 2\}$, then $A \times B = \{(1,1),(1,2),(2,1),(2,2),(3,1),(3,2)\}$, and we have
+		\[
+		|A \times B| = 6 = 3 \cdot 2 = |A| \cdot |B|.
+		\]
+	\end{nex}
+If $A_1,\dots, A_n$ are sets, then $A_1 \times \dots A_n$ is the set consisting of all elements
+\[
+(a_1,\dots, a_n)\ \ \ \ \ \ a_i \in A_i.
+\]
+The product rule extends to this case: If $A_1,\dots, A_n$ are finite sets, then
+\[
+|A_1 \times \dots \times A_n| = |A_1|\cdots |A_n| = \prod_{i=1}^n |A_i|.
+\]
+\begin{nex}
+	\label{ex:restaurant}
+Suppose a restaurant has a menu with a set of 3 starters, 4 main courses, and 3 desserts.
+What is the number of possible three course meals?
+Writing $S, M$ and $D$ for the sets of starters, mains and desserts, respectively, a three course meal can be thought of as an element of $S \times M \times D$, i.e. a triple $(s,m,d)$ with $s$ a starter, $m$ a main and $d$ a dessert.
+Thus the number of meals possible is 
+\[
+|S \times M \times D| = |S||M||D| = 3 \cdot 4 \cdot 3 = 36.
+\]
+\end{nex}
+	
+\subsection{Bijections}
+If $A$ and $B$ are sets, then a \textbf{bijection} between $A$ and $B$ is, informally, a way to match up elements of $A$ and $B$ in such a way that every element of $A$ corresponds to a unique element of $B$ and vice versa.
+More formally, a bijection is a function $\phi \colon A \to B$ such that for every $b \in B$ there is a \textit{unique} $a \in A$ such that $\phi(a) = b$.
+
+The first way to show that $\phi$ is a bijection is to show that 
+\begin{nlemma}
+	Let $A$ and $B$ be sets, and let $\phi \colon A \to B$ and $\psi \colon B \to A$ be functions such that for all $a \in A$ we have $\psi(\phi(a)) = a$, and for all $b \in B$ we have $\phi(\psi(b)) = b$.
+	Then $\phi$ and $\psi$ are bijections.
+\end{nlemma}
+\begin{proof}
+	We prove that $\phi$ is a bijection, the case of $\psi$ is similar.
+	Let $b \in B$.
+	We must show that there is a unique $a \in A$ such that $\phi(a) = b$.
+	If we take $a = \psi(b)$, then $\phi(a) = \phi(\psi(b)) = b$, by assumption.
+	It remains to show that $a$ is unique, i.e.~that if $a'\in A$ is such that $\phi(a') = b$, then in fact $a' = a$.
+	Suppose $\phi(a') = b$.
+	Then
+	\[
+	a = \psi(b) = \psi(\phi(a')) = a',
+	\]
+	so $a = a'$, which is what we wanted.
+\end{proof}
+
+\begin{nex}
+	Let $\ZZ$ be the set of integers and $2\ZZ$ the set of even integers.
+	Then $\phi \colon \ZZ \to 2\ZZ$ given by $\phi(m) = 2m$, and $\psi \colon 2\ZZ \to \ZZ$ given by $\psi(n) = n/2$ have the property that $\phi(\psi(n)) = n$ and $\psi(\phi(m)) = m$ for all $m,n$, so define bijections between $\ZZ$ and $2\ZZ$.
+\end{nex}
+
+\begin{nlemma}
+	A function $\phi \colon A \to B$ is a bijection if and only if
+	\begin{itemize}
+		\item $\phi$ is injective: If $a_1 \not= a_2 \in A$, then $\phi(a_1) \not= \phi(a_2)$
+		\item $\phi$ is surjective: If $b \in B$, there is some $a \in A$ such that $\phi(a) = b$.
+	\end{itemize}
+\end{nlemma}
+\begin{proof}
+	Exercise.
+\end{proof}
+Thus the problem of showing that a given map is a bijection can often be divided into two parts, showing injectivity and surjectivity.
+\todo{Change to ``rule of equality''}
+The third counting principle says the following: If $A$ and $B$ are finite sets and there is some bijection between $A$ and $B$, then $|A| = |B|$.
+
+\begin{nex}
+	Consider a regular polygon in the plane (a triangle, square, etc.), with a set of corners $C$ and a set of edges $E$.
+	There is a map $\phi \colon C \to E$ defined by, for every corner $c$, letting $\phi(c)$ be the edge directly adjacent to $c$ in a clockwise direction.
+	This is a bijection (how would you describe the inverse map $\psi \colon E \to C$?), and so $|C| = |E|$, the number of corners equals the number of edges.
+\end{nex}
+	
+\begin{nremark}
+	The principle of bijection already snuck in in other places, e.g.~in Ex.~\ref{ex:restaurant} the set of three course meals is not exactly $S \times M \times D$, but there is an obvious bijection between the set of three course meals and $S \times M \times D$, which is good enough for counting.
+\end{nremark}
+
+\subsection{Correspondences}
+\end{document}
